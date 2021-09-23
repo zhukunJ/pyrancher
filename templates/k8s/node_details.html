@@ -1,0 +1,134 @@
+{% extends 'base.html' %}
+{% block title %}Nodes{% endblock %}
+{% block nav-item-1 %}layui-nav-itemed{% endblock %}
+{% block nav-this-1-1 %}layui-this{% endblock %}
+{% block content %}
+    <span class="layui-breadcrumb">
+      <a href="#">首页</a>
+      <a href="#">Kubernetes</a>
+      <a href="#">Nodes</a>
+      <a><cite>节点详情</cite></a>
+    </span>
+    <hr>
+
+    <div class="layui-col-md12 layui-col-space10">
+        <div class="layui-col-md6">
+            <div class="layui-card">
+
+                <div class="layui-card-header" style="background: black;color: white;border-radius: 5px; /*圆形边框*/;box-shadow: 3px 1px 10px 5px #393D49;/*边框阴影*/" ><h1> 节点资源</h1></div>
+                <br><br>
+                <div class="layui-card-body">
+                   <h2 style="background: #393D49;color: white;border-radius: 5px; /*圆形边框*/;box-shadow: 3px 1px 10px 5px #393D49;/*边框阴影*/">    CPU</h2>
+                    <span class="layui-badge layui-bg-orange" style="font-size: large;top: 12px;color: black;border-radius: 5px;border-radius: 5px; /*圆形边框*/;box-shadow: 3px 1px 10px 5px black;/*边框阴影*/"> 已分配 {{ node_resouces.cpu_requests }} 核</span>
+                    <span class="layui-badge layui-bg-orange" style="font-size: large;top: 12px;color: black;border-radius: 5px;border-radius: 5px; /*圆形边框*/;box-shadow: 3px 1px 10px 5px black;/*边框阴影*/">可分配 {{ node_resouces.allocatable_cpu }} 核</span>
+{#                    <span class="layui-badge layui-bg-gray" style="font-size: large;top: 12px;;border-radius: 5px;border-radius: 5px; /*圆形边框*/;box-shadow: 3px 1px 10px 5px black;/*边框阴影*/">总量 {{ node_resouces.capacity_cpu }} 核</span>#}
+                    <br><br><br>
+                    <h2 style="background: #393D49;color: white;border-radius: 5px; /*圆形边框*/;box-shadow: 3px 1px 10px 5px #393D49;/*边框阴影*/">内存</h2>
+                    <span class="layui-badge layui-bg-orange" style="font-size: large;top: 12px;color: black;border-radius: 5px;border-radius: 5px; /*圆形边框*/;box-shadow: 3px 1px 10px 5px black;/*边框阴影*/"> 已分配 {{ node_resouces.memory_requests }} G</span>
+                    <span class="layui-badge layui-bg-orange" style="font-size: large;top: 12px;color: black;border-radius: 5px;border-radius: 5px; /*圆形边框*/;box-shadow: 3px 1px 10px 5px black;/*边框阴影*/">可分配 {{ node_resouces.allocatable_memory }} G</span>
+{#                    <span class="layui-badge layui-bg-gray" style="font-size: large;top: 12px;color: black;border-radius: 5px;border-radius: 5px; /*圆形边框*/;box-shadow: 3px 1px 10px 5px black;/*边框阴影*/">总量 {{ node_resouces.capacity_memory }} G</span>#}
+                    <br><br><br>
+                    <h2 style="background: #393D49;color: white;border-radius: 5px; /*圆形边框*/;box-shadow: 3px 1px 10px 5px #393D49;/*边框阴影*/">存储</h2>
+                    <span class="layui-badge layui-bg-orange" style="font-size: large;top: 12px;color: black;border-radius: 5px;border-radius: 5px; /*圆形边框*/;box-shadow: 3px 1px 10px 5px black;/*边框阴影*/">可分配 {{ node_resouces.allocatable_ephemeral_storage }} G</span>
+                    <span class="layui-badge layui-bg-orange" style="font-size: large;top: 12px;color: black;border-radius: 5px;border-radius: 5px; /*圆形边框*/;box-shadow: 3px 1px 10px 5px black;/*边框阴影*/">总量 {{ node_resouces.capacity_ephemeral_storage }} G</span>
+                    <br><br><br>
+                    <h2 style="background: #393D49;color: white;border-radius: 5px; /*圆形边框*/;box-shadow: 3px 1px 10px 5px #393D49;/*边框阴影*/">Pod数量</h2>
+                    <span class="layui-badge layui-bg-orange" style="font-size: large;top: 12px;color: black;border-radius: 5px;border-radius: 5px; /*圆形边框*/;box-shadow: 3px 1px 10px 5px black;/*边框阴影*/">已创建 {{ node_resouces.pods_number }} 个</span>
+                    <span class="layui-badge layui-bg-orange" style="font-size: large;top: 12px;color: black;border-radius: 5px;border-radius: 5px; /*圆形边框*/;box-shadow: 3px 1px 10px 5px black;/*边框阴影*/">总量 {{ node_resouces.capacity_pods }} 个</span>
+                    <hr class="layui-bg-gray">
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-md6">
+            <div class="layui-card">
+                <div class="layui-card-header" style="background: black;color: white;border-radius: 5px; /*圆形边框*/;box-shadow: 3px 1px 10px 5px #393D49;/*边框阴影*/" > <h1>节点信息</h1></div>
+                <div class="layui-card-body">
+
+                    <b>节点名称：{{ node_info.node_name }}</b>
+                     <hr class="layui-bg-gray">
+                     <b>主机名：{{ node_info.hostname }}</b>
+                     <hr class="layui-bg-gray">
+                    <b> 内部IP：{{ node_info.internal_ip }}</b>
+                     <hr class="layui-bg-gray">
+                    <b> Pod网络：{{ node_info.pod_cidr }}</b>
+                     <hr class="layui-bg-gray">
+                    <b> 操作系统：{{ node_info.os }}</b>
+                     <hr class="layui-bg-gray">
+                    <b> 内核：{{ node_info.kernel }}</b>
+                     <hr class="layui-bg-gray">
+                    <b> CPU架构：{{ node_info.cpu_arch }}</b>
+                     <hr class="layui-bg-gray">
+                    <b> 容器引擎：{{ node_info.container_runtime_version }}</b>
+                     <hr class="layui-bg-gray">
+                     <b>kubelet版本：{{ node_info.kubelet_version }}</b>
+                     <hr class="layui-bg-gray">
+                     <b>kube-proxy版本：{{ node_info.kube_proxy_version }}</b>
+                     <hr class="layui-bg-gray">
+                    <b> 不可调度：{{ node_info.unschedulable }}</b>
+                     <hr class="layui-bg-gray">
+                     <b>标签：
+                     {% for k,v in node_info.labels.items %}
+                     <span style='border: 1px solid #d6e5ec;border-radius: 20px;padding: 1px 6px 1px 6px'>{{ k }}:{{ v }}</span>
+                     {% endfor %} </b>
+                     <hr class="layui-bg-gray">
+                     <b>污点：
+                     {% if node_info.taints %}
+                         {% for i in node_info.taints%}
+                            <span style='border: 1px solid #d6e5ec;border-radius: 20px;padding: 1px 6px 1px 6px'>{{ i.key }}={{ i.value }}[{{ i.effect }}]</span>
+                         {% endfor %}
+                     {% else %}
+                         None
+                     {% endif %} </b>
+                     <hr class="layui-bg-gray">
+
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-header"  style="background: black;color: white;border-radius: 5px; /*圆形边框*/;box-shadow: 3px 1px 10px 5px #393D49;/*边框阴影*/" ><h1>容器信息</h1></div>
+                <div class="layui-card-body">
+                    <table class="layui-hide" id="test" lay-filter="test"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block js %}
+<script>
+layui.use('table', function(){
+  var table = layui.table;
+  var $ = layui.jquery;
+
+      table.render({
+        elem: '#test'
+        ,url:'{% url 'node_details_pod_list' %}?node_name=' + '{{ node_name }}'
+        ,toolbar: '#toolbarDemo' //开启头部工具栏，并为其绑定左侧模板
+        ,defaultToolbar: ['filter', 'exports', 'print', { //自定义头部工具栏右侧图标。如无需自定义，去除该参数即可
+          title: '提示'
+          ,layEvent: 'LAYTABLE_TIPS'
+          ,icon: 'layui-icon-tips'
+        }]
+        ,cols: [[
+          {field: 'pod_name', title: 'Pod名称', sort: true, width: 350}
+          ,{field: 'namespace', title: '命名空间', sort: true, width: 200}
+          ,{field: 'status', title: '运行状态', sort: true, width: 200}
+          ,{field: 'pod_ip', title: 'Pod IP', width: 200}
+          ,{field: 'cpu_requests', title: 'CPU请求',sort: true, width: 255}
+          ,{field: 'cpu_limits', title: 'CPU限制',sort: true , width: 255}
+          ,{field: 'memory_requests', title: '内存请求',sort: true, width: 255}
+          ,{field: 'memory_limits', title: '内存限制',sort: true, width: 255}
+          ,{field: 'create_time', title: '创建时间', width: 200}
+        ]]
+        ,page: true
+        ,limits: [50,100,200] //显示能展示选择的最大页数量
+        ,limit : 50 // 一定要和limits中第一个值对应 如 limits: [50,100,200]  limit要写50
+      });
+
+    });
+
+</script>
+
+{% endblock %}

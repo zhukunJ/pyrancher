@@ -1,0 +1,31 @@
+        h1 { /*针对当前页面H1设置样式*/
+            color: red;
+        }
+
+        h2, h3 { /*组合选择器*/
+            color: green;
+        }
+
+        body { /*p标签集成body标签样式属性*/
+            color: darkorchid;
+        }
+
+        #id1 {
+            /*#id 这种最好以#id开头*/
+            color: orange;
+        }
+
+        .c1 {
+            color: lightseagreen;
+        }
+
+        .cd {
+            width: 200px;
+            height: 200px;
+            background-color: lightgray;
+            /*background-color代表背景颜色*/
+        }
+
+        .cd p {
+            color: mediumvioletred;
+        }

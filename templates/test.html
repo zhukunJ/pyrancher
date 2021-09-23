@@ -1,0 +1,165 @@
+{% extends 'base.html' %}
+{% block title %}命名空间{% endblock %}
+{% block content %}
+    <div class="layui-card">
+    <div class="layui-card-body">
+
+        <div class="layui-row">
+            <div class="layui-col-md12">
+
+                <script type="text/html" id="toolbarDemo">
+                    <div class="layui-btn-container">
+                        <button class="layui-btn layui-btn-sm" lay-event="getCheckData">获取选中行数据</button>
+                        <button class="layui-btn layui-btn-sm" lay-event="getCheckLength">获取选中数目</button>
+                        <button class="layui-btn layui-btn-sm" lay-event="isAll">验证是否全选</button>
+                    </div>
+                    </div>
+                </script>
+                <button class="layui-btn" style="float: left; background: darkslategray">创建</button>
+                <input type="text" name="name" class="layui-input"
+                       style="width: 150px;float: left;margin-left: 20px">
+                <button class="layui-btn" style="float: left; background: darkslategray" id="searchBtn">搜索</button>
+
+            </div>
+
+            <div class="layui-col-md12">
+                <div class="layui-col-md12">
+                    <table class="layui-hide" id="test" lay-filter="test"></table>
+                    <script type="text/html" id="barDemo">
+                        <a class="layui-btn layui-btn-xs layui-btn-primary" style="color: black;background: #00F7DE" lay-event="yaml">YAML</a>
+                        <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+                    </script>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block js %}
+    <script>
+        layui.use('table', function () {
+            var table = layui.table;
+            var $ = layui.jquery;
+
+            table.render({
+                elem: '#test'
+                , url: '{% url 'namespace_api' %}' //请求namespace_api 视图返回的 return JsonResponse(res) 数据进行数据解析并在表格展示
+                , toolbar: '#toolbarDemo' //开启头部工具栏，并为其绑定左侧模板
+                , defaultToolbar: ['filter', 'exports', 'print', { //自定义头部工具栏右侧图标。如无需自定义，去除该参数即可
+                    title: '提示'
+                    , layEvent: 'LAYTABLE_TIPS'
+                    , icon: 'layui-icon-tips'
+                }]
+                , title: '用户数据表'
+                , cols: [[
+                    {type: 'checkbox', fixed: 'right'}, //按照右边第一个为基准来进行选择，如果写left ，一旦右边字段占了多行就会选择出错
+                    {field: 'name', title: '名称', sort: true}
+                    , {field: 'labels', title: '标签', templet: labelsFormat} //templet: labelsFormat显示[object 数据]
+                    , {field: 'create_time', title: '创建时间', sort: true}
+                    , {fixed: 'right', title: '操作', toolbar: '#barDemo', width: 150}
+                ]]
+                , page: true
+                ,limits: [3]
+                , id: 'nstb'
+            });
+
+            //头工具栏事件
+            table.on('toolbar(test)', function (obj) {
+                var checkStatus = table.checkStatus(obj.config.id);
+                switch (obj.event) {
+                    case 'getCheckData':
+                        var data = checkStatus.data;
+                        layer.alert(JSON.stringify(data));
+                        break;
+                    case 'getCheckLength':
+                        var data = checkStatus.data;
+                        layer.msg('选中了：' + data.length + ' 个');
+                        break;
+                    case 'isAll':
+                        layer.msg(checkStatus.isAll ? '全选' : '未全选');
+                        break;
+
+                    //自定义头工具栏右侧图标 - 提示
+                    case 'LAYTABLE_TIPS':
+                        layer.alert('这是工具栏右侧自定义的一个图标按钮');
+                        break;
+                }
+                ;
+            });
+
+            function labelsFormat(d) { //根据上面的{field: 'labels', title: '标签', templet: labelsFormat} 循环打印标签和空标签判断展示
+                //console.log(d.labels)
+                result = "";
+                if (d.labels == null) {
+                    return "无标签"
+                } else {
+                    for (let key in d.labels) {
+                        result += '<span style="border:3px solid #d6e5ec;border-radius: 8px;background: #78c9cf;box-shadow: 10px 2px 3px 1px black;">' +
+                            key + ":" + d.labels[key] + "</span><br>"
+                    }
+                    return result
+                }
+            }
+
+            //监听行工具事件
+            table.on('tool(test)', function (obj) {
+                var that = this
+                var data = obj.data;
+                //console.log(obj)
+                if (obj.event === 'del') {
+                    layer.confirm('真的要删除' + data["name"] + "这个命名空间吗？",
+                        {
+                            btn: ['确认', '取消'],
+                            content: '<div  style="padding: 50px; line-height: 22px; background-color: #393D49; color: crimson; font-weight: 300;"> <b>命名空间用于组织 Kubernetes 集群中的对象，每个命名空间都使用唯一的名称进行指定, 删除命名空间的同时将移除其所有资源对象。</b> </div>'
+                        }, function (index) {
+                            csrf_token = $('[name="csrfmiddlewaretoken"]').val();
+                            $.ajax({
+                                url: '{% url 'namespace_api' %}',
+                                type: "DELETE",
+                                data: data, //代表你选中的数据提交给Django
+                                headers: {"X-CSRFToken": csrf_token},
+                                success: function (res) {
+                                    if (res.code == 0) {
+                                        layer.msg(res.msg, {icon: 6}); //icon: 6爱心笑脸
+                                        obj.del() //网页进行删除
+                                    } else {
+                                        layer.msg(res.msg, {icon: 5})//icon: 5哭笑脸
+                                    }
+                                },
+                                error: function () {
+                                    layer.msg("服务器接口异常", {icon: 5})//icon: 5哭笑脸
+                                }
+                            })
+
+                        });
+                } else if (obj.event === 'yaml') {
+
+                }
+            });
+            // 监听搜索按钮事件
+
+
+            $(document).keydown(function (event) {
+                if (event.keyCode == 13) {
+                    document.getElementById("searchBtn").click();
+                }
+            });
+
+            $("#searchBtn").click(function () {
+                var search_key = $("input[name='name']").val();
+                table.reload('nstb', {
+                    where: { //设定异步数据接口的额外参数，任意设
+                        search_key: search_key
+                    }
+                    , page: {
+                        curr: 1 //重新从第 1 页开始
+                    }
+                }); //只重载数据
+            })
+
+        });
+    </script>
+    </div>
+{% endblock %}

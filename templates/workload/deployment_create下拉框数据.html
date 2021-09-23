@@ -1,0 +1,201 @@
+{% extends 'base.html' %}
+{% block title %}Deployments{% endblock %}
+{% block nav-item-2 %}layui-nav-itemed{% endblock %}
+{% block nav-this-2-1 %}layui-this{% endblock %}
+{% block content %}
+    <span class="layui-breadcrumb">
+      <a href="#">首页</a>
+      <a href="#">工作负载</a>
+      <a><cite>Deployments</cite></a>
+    </span>
+    <hr>
+
+    <div class="layui-card">
+        <div class="layui-card-body">
+
+        <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+          <legend>创建Deployment</legend>
+        </fieldset>
+
+        <form class="layui-form " onclick="return false">
+            <div class="layui-form-item">
+                <label class="layui-form-label">名称：</label>
+                <div class="layui-input-block">
+                  <input type="text" name="name" lay-verify="required" lay-reqtext="名称是必填项，不能为空！" placeholder="" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">命名空间：</label>
+                <div class="layui-input-block">
+                <select name="namespace"  lay-verify="required" id="ns" lay-search="" lay-filter="select_ns2">
+                    <option value="">直接选择或搜索选择</option>
+                </select>
+                </div>
+             </div>
+
+                 <label class="layui-form-label">服务器IP：</label>
+                 <div class="layui-input-block">
+                   <select name="server_ip"  lay-verify="required" lay-search="" lay-filter="select_ns2">
+                      <option value="">直接选择或搜索选择</option>
+                      <option value="192.168.31.62">192.168.31.62</option>
+                      <option value="192.168.31.63">192.168.31.63</option>
+                    </select>
+                 </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">镜像：</label>
+                <div class="layui-input-block">
+                  <input type="text" name="image" lay-verify="required" lay-reqtext="镜像是必填项，不能为空！" placeholder="" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">副本数：</label>
+                <div class="layui-input-block">
+                  <input type="text" name="replicas" value="3" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">标签：</label>
+                <div class="layui-input-block">
+                  <input type="text" name="labels" lay-verify="required" lay-reqtext="标签是必填项，不能为空！" placeholder="示例: project=ms,app=gateway" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+
+              <div class="layui-form-item">
+                <div class="layui-inline">
+                  <label class="layui-form-label">CPU资源请求</label>
+                  <div class="layui-input-inline">
+                  <input type="text" name="cpu_requests" lay-verify="required" placeholder="示例: 1000m" autocomplete="off" class="layui-input">
+                  </div>
+                </div>
+                <div class="layui-inline">
+                  <label class="layui-form-label">CPU资源限制</label>
+                  <div class="layui-input-inline">
+                  <input type="text" name="cpu_limits" lay-verify="required" placeholder="示例: 1000m" autocomplete="off" class="layui-input">
+                  </div>
+                </div>
+              </div>
+
+              <div class="layui-form-item">
+                <div class="layui-inline">
+                  <label class="layui-form-label">内存资源请求</label>
+                  <div class="layui-input-inline">
+                  <input type="text" name="mem_requests" lay-verify="required"  placeholder="示例: 2Gi" autocomplete="off" class="layui-input">
+                  </div>
+                </div>
+                <div class="layui-inline">
+                  <label class="layui-form-label">内存资源限制</label>
+                  <div class="layui-input-inline">
+                  <input type="text" name="mem_limits" lay-verify="required"  placeholder="示例: 2Gi" autocomplete="off" class="layui-input">
+                  </div>
+                </div>
+              </div>
+
+                 <label class="layui-form-label">服务器IP：</label>
+                 <div class="layui-input-block">
+                   <select name="server_ip"  lay-verify="required" lay-search="" lay-filter="select_ns2">
+                      <option value="">直接选择或搜索选择</option>
+                      <option value="192.168.31.62">192.168.31.62</option>
+                      <option value="192.168.31.63">192.168.31.63</option>
+                    </select>
+                 </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">健康检查：</label>
+                <div class="layui-input-block">
+                  <input type="checkbox" name="health[liveness]" title="存活检查">
+                  <input type="checkbox" name="health[readiness]" title="就绪检查" >
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                  <button type="submit" class="layui-btn" lay-submit="" lay-filter="btn">立即提交</button>
+                  <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                </div>
+            </div>
+
+        </form>
+
+        </div>
+    </div>
+
+
+{% endblock %}
+
+{% block js %}
+<script>
+{#var storage = window.sessionStorage;#}
+{#var namespace = storage.getItem("namespace");#}
+
+layui.use(['table','form','layer','element'], function(){
+  var element = layui.element;
+  var table = layui.table;
+  var layer = layui.layer;
+  var form = layui.form;
+  var $ = layui.jquery;
+
+    layui.use('element', function () {
+        var element = layui.element;
+        var $ = layui.jquery;
+        var layer = layui.layer;
+        $.ajax({
+            type: "GET",
+            url: "{% url 'namespace_api' %}",
+            timeout: 5000,  // 将当前选择的命名空间保存到本地浏览器session存储 ，因为ajax为异步所以设置async异步关闭，然后设置一个超时时间
+            async: false, // 将当前选择的命名空间保存到本地浏览器session存储 ，因为ajax为异步所以设置async异步关闭
+            success: function (res) {
+                if (res.code == 0) {
+                    for (let index in res.data) { //let 为定义一个局部变量index
+                        row = res.data[index];
+                        $("#ns").append('<option value=' + row.name + '>' + row.name + '</option>')
+                    }
+                      form.render();
+                    // 设置默认命名空间
+                } else {
+                    $("#ns").append('<option value="default">default</option>');
+                    $("#ns").attr("disabled", "disabled");
+                    {#$("#nsSelect").append('<option value=' + res.msg + '>' + res.msg + '</option>')#}
+                }
+                  form.render();
+            },
+            error: function () {
+                layer.msg("服务器接口异常！", {icon: 5})
+            }
+        });
+    });
+
+  {#$('#ns').append('<option value=' + namespace + '>' + namespace + '</option>');#}
+  {#form.render();#}
+
+
+  // 监听提交
+  form.on('submit(btn)', function (data) {
+      data = data.field;
+      console.log(data)
+      csrf_token = $('[name="csrfmiddlewaretoken"]').val();
+      data['csrfmiddlewaretoken'] = csrf_token;
+        $.ajax({
+            url: '{% url 'deployment_api' %}',
+            type: "POST",
+            data: data,
+            success: function (res) {
+                if (res.code == 0) {
+                    layer.msg(res.msg, {icon: 6});
+                } else {
+                    layer.msg(res.msg, {icon: 5})
+                }
+            },
+            error: function () {
+                layer.msg("服务器接口异常",{icon: 5})
+            }
+        })
+  })
+
+});
+</script>
+
+{% endblock %}
